@@ -1,0 +1,11 @@
+Import('*')
+
+DebugFlag('PredictorTable')
+DebugFlag('PendingTable')
+DebugFlag('ChunkInfo')
+
+Source('Declarations.cc')
+Source('WriteHistoryBuffer.cc')
+Source('PredictorTable.cc')
+Source('PendingTable.cc')
+Source('SharedArea.cc')

@@ -1,0 +1,6 @@
+.vscode/
+.history
+output.txt
+m5out/
+*~
+dump.txt

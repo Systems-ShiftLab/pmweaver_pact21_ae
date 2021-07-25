@@ -1,0 +1,4 @@
+PMEM_NO_MOVNT=1
+GLIBC_TUNABLES=glibc.cpu.x86_non_temporal_threshold=10000
+PMEMOBJ_LOG_LEVEL=4
+LD_LIBRARY_PATH=/usr/local/lib/

@@ -1,0 +1,12 @@
+.history
+.vscode/
+*~
+m5out/
+.ipynb_checkpoints/
+*.pf
+*.stats
+*.out
+*.dat
+*.txt.head*
+*.log
+\#*#
