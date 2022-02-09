@@ -1,5 +1,31 @@
-Artifact repository for PMWeaver. 
 
+
+
+If you find PMWeaver useful in your research, please cite:
+
+> Suyash Mahar, Sihang Liu, Korakit Seemakhupt, Vinson Young, Samira Khan  
+> [Write Prediction for Persistent Memory Systems](https://suyashmahar.com/resources/papers/pmweaver_pact21.pdf)  
+> 30th International Conference on Parallel Architectures and Compilation Techniques (PACT), 2021
+
+
+<details><summary><i>BibTex</i></summary>
+<p>
+
+```
+@inproceedings{mahar2021write,
+  title={Write Prediction for Persistent Memory Systems},
+  author={Mahar, Suyash and Liu, Sihang and Seemakhupt, Korakit and Young, Vinson and Khan, Samira},
+  booktitle={2021 30th International Conference on Parallel Architectures and Compilation Techniques (PACT)},
+  pages={242--257},
+  year={2021},
+  organization={IEEE}
+}
+```
+
+</p>
+</details>
+
+# Artifact repository for PMWeaver. 
 This readme contains basic commands to reproduce results of the experiments. For more details, check the appendix of the paper.
 
 ## PMWeaver Docker image
