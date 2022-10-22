@@ -247,7 +247,7 @@ subscriber_entry subscriber_table_entry_backup;
 uint64_t subscriber_table_entry_backup_valid;
 
 long TATP_DB::get_sub_id() {
-    return ((long)get_random_s_id(0))/total_subscribers;
+    return ((long)get_random_s_id(0)) % total_subscribers;
 }
 
 void TATP_DB::backup_location(long subId) {
