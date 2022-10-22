@@ -35,13 +35,13 @@ void TATP_DB::initialize(unsigned num_subscribers, int n) {
   subscriber_table = (subscriber_entry*)(pool);
 
   // A max of 4 access info entries per subscriber
-  access_info_table = (access_info_entry*)(pool + stsz);
+  access_info_table = (access_info_entry*)(((size_t)pool) + stsz);
 
   // A max of 4 access info entries per subscriber
-  special_facility_table = (special_facility_entry*) (pool + stsz + aitsz);
+  special_facility_table = (special_facility_entry*) (((size_t)pool) + stsz + aitsz);
 
   // A max of 3 call forwarding entries per "special facility entry"
-  call_forwarding_table= (call_forwarding_entry*) (pool + stsz + aitsz + sftsz);
+  call_forwarding_table= (call_forwarding_entry*) (((size_t)pool) + stsz + aitsz + sftsz);
   std::cout << "Table initialized at " << (void*)call_forwarding_table << std::endl;
   //Korakit
   //removed for single thread version
