@@ -182,7 +182,7 @@ void TATP_DB::fill_call_forwarding_entry(unsigned _s_id, short _sf_type, short _
   if(_start_time == 0)
     return;
 
-  int tab_indx = 12*_s_id + 3*(_sf_type-1) + (_start_time-8)/8;
+  int tab_indx = 4*_s_id + 3*(_sf_type-1) + (_start_time-8)/8;
 
   call_forwarding_table[tab_indx].s_id = _s_id;
   call_forwarding_table[tab_indx].sf_type = _sf_type;
