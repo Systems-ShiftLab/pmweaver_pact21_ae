@@ -47,8 +47,8 @@ class TATP_DB{
 
     void update_subscriber_data(int threadId); // Tx: updates a random subscriber data
     long get_sub_id();
-    void backup_location(long subId);
-    void discard_backup(long subId);
+    void backup_location(int thread_id, long subId);
+    void discard_backup(int thread_id, long subId);
     void update_location(long subId, uint64_t vlr); // Tx: updates location for a random subscriber
     void insert_call_forwarding(int threadId); // Tx: Inserts into call forwarding table for a random user
     void delete_call_forwarding(int threadId); // Tx: Deletes call forwarding for a random user

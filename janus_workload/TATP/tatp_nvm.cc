@@ -48,9 +48,9 @@ void* update_locations(void* args, int coreid) {
   for(int i=0; i<NUM_OPS/NUM_THREADS; i++) {
     long subId = my_tatp_db->get_sub_id();
     uint64_t vlr = my_tatp_db->get_random_vlr(0);
-    my_tatp_db->backup_location(subId);
+    my_tatp_db->backup_location(thread_id, subId);
     my_tatp_db->update_location(subId, vlr);
-    my_tatp_db->discard_backup(subId);
+    my_tatp_db->discard_backup(thread_id, subId);
   }
 #ifdef GEM5
   m5_work_end(coreid,0);

@@ -8,10 +8,14 @@ This file defines the various transactions in TATP.
 #include "tatp_db.h"
 #include <cstdlib> // For rand
 #include <iostream>
+#include <string.h>
 //#include <queue>
 //#include <iostream>
 #include "../common/common.h"
 #define NUM_RNDM_SEEDS 1280
+
+subscriber_entry *subscriber_table_entry_backup;
+uint64_t *subscriber_table_entry_backup_valid;
 
 int getRand() {
   return rand();
@@ -29,20 +33,23 @@ void TATP_DB::initialize(unsigned num_subscribers, int n) {
   size_t aitsz = 4*num_subscribers*sizeof(access_info_entry);
   size_t sftsz = 4*num_subscribers*sizeof(special_facility_entry);
   size_t cftsz = 3*4*num_subscribers*sizeof(call_forwarding_entry);
-  
-  void* pool = aligned_malloc(64, stsz + aitsz + sftsz + cftsz);
-  
+  size_t basz = n*sizeof(subscriber_entry); // backup array size
+  size_t vasz = n*sizeof(uint64_t); // valid array size
+  void* pool = aligned_malloc(64, stsz + aitsz + sftsz + cftsz + basz + vasz);
   subscriber_table = (subscriber_entry*)(pool);
 
   // A max of 4 access info entries per subscriber
-  access_info_table = (access_info_entry*)(pool + stsz);
+  access_info_table = (access_info_entry*)(((size_t)pool) + stsz);
 
   // A max of 4 access info entries per subscriber
-  special_facility_table = (special_facility_entry*) (pool + stsz + aitsz);
+  special_facility_table = (special_facility_entry*) (((size_t)pool) + stsz + aitsz);
 
   // A max of 3 call forwarding entries per "special facility entry"
-  call_forwarding_table= (call_forwarding_entry*) (pool + stsz + aitsz + sftsz);
+  call_forwarding_table= (call_forwarding_entry*) (((size_t)pool) + stsz + aitsz + sftsz);
   std::cout << "Table initialized at " << (void*)call_forwarding_table << std::endl;
+
+  subscriber_table_entry_backup = (subscriber_entry*) (((size_t)pool) + stsz + aitsz + sftsz + cftsz);
+  subscriber_table_entry_backup_valid = (uint64_t*) (((size_t)pool) + stsz + aitsz + sftsz + cftsz + basz);
   //Korakit
   //removed for single thread version
   /*
@@ -182,7 +189,7 @@ void TATP_DB::fill_call_forwarding_entry(unsigned _s_id, short _sf_type, short _
   if(_start_time == 0)
     return;
 
-  int tab_indx = 12*_s_id + 3*(_sf_type-1) + (_start_time-8)/8;
+  int tab_indx = 4*_s_id + 3*(_sf_type-1) + (_start_time-8)/8;
 
   call_forwarding_table[tab_indx].s_id = _s_id;
   call_forwarding_table[tab_indx].sf_type = _sf_type;
@@ -243,30 +250,27 @@ void TATP_DB::update_subscriber_data(int threadId) {
   return;
 }
 
-subscriber_entry subscriber_table_entry_backup;
-uint64_t subscriber_table_entry_backup_valid;
-
 long TATP_DB::get_sub_id() {
-    return ((long)get_random_s_id(0))/total_subscribers;
+    return ((long)get_random_s_id(0)) % total_subscribers;
 }
 
-void TATP_DB::backup_location(long subId) {
+void TATP_DB::backup_location(int thread_id, long subId) {
     /* Backup the location */
-    subscriber_table_entry_backup = subscriber_table[subId];
-    flush_caches(&subscriber_table_entry_backup, sizeof(subscriber_table_entry_backup));
+    memcpy(&subscriber_table_entry_backup[thread_id], &subscriber_table[subId], sizeof(subscriber_entry));
+    flush_caches(&subscriber_table_entry_backup[thread_id], sizeof(subscriber_entry));
     s_fence();
 
     /* Set the valid bit to 1 */
-    subscriber_table_entry_backup_valid = 1;
-    flush_caches(&subscriber_table_entry_backup_valid, sizeof(uint64_t));
+    subscriber_table_entry_backup_valid[thread_id] = 1;
+    flush_caches(&subscriber_table_entry_backup_valid[thread_id], sizeof(uint64_t));
     s_fence();
 
     return;
 }
 
-void TATP_DB::discard_backup(long subId) {
-    subscriber_table_entry_backup_valid = 0;
-    flush_caches(&subscriber_table_entry_backup_valid, sizeof(uint64_t));
+void TATP_DB::discard_backup(int thread_id, long subId) {
+    subscriber_table_entry_backup_valid[thread_id] = 0;
+    flush_caches(&subscriber_table_entry_backup_valid[thread_id], sizeof(uint64_t));
     s_fence();
 }
 
